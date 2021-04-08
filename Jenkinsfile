@@ -6,9 +6,17 @@ pipeline {
                     git 'https://github.com/datsys96/task5nodejs.git'
                }
           }
-          stage("build image") {
+	   stage("sona scaner") {
                steps {
-                    sh 'docker build -t nodejs12:2 .'
+               withSonarQubeEnv('sonar') {
+                sh "${scannerHome}/bin/sonar-scanner"
+               }
+                waitForQualityGate abortPipeline: true
+          }
+          }
+          stage("test junit") {
+               steps {
+                    junit 'test.xml'
                }
           }
      }
